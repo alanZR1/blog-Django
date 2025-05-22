@@ -5,7 +5,11 @@ include/
 lib/
 *.pyc
 __pycache__/
-
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
 # Archivos temporales
 *.log
 *.sqlite3
