@@ -32,3 +32,5 @@ Thumbs.db
 
 # Archivos compilados
 *.so
+__pycache__/
+*.py[cod]
