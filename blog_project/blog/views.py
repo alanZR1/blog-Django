@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from .models import Post
-from .forms import PostForm
+from .models import Post, Comentario
+from .forms import PostForm, ComentarioForm
 
 def lista_posts(request):
     post = Post.objects.all().order_by('-creado')
@@ -52,3 +52,28 @@ def eliminar_post(request, pk):
         return redirect('lista_posts')
     
     return render(request, 'blog/eliminar_post.html', {'post': post})
+
+
+def detalle_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    comentarios = post.comentarios.all().order_by('creado')
+
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            form = ComentarioForm(request.POST)
+            if form.is_valid():
+                comentario = form.save(commit=False)
+                comentario.post = post
+                comentario.autor = request.user
+                comentario.save()
+                return redirect('detalle_post', pk=post.pk)
+        else:
+            return HttpResponseForbidden("Debes iniciar sesión para comentar.")
+    else:
+        form = ComentarioForm()
+
+    return render(request, 'blog/detalle_post.html', {
+        'post': post,
+        'comentarios': comentarios,
+        'form': form
+    })

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>{{ post.titulo }}</h2>
+  <p>{{ post.contenido|linebreaks }}</p>
+  <small>Publicado por {{ post.autor }} el {{ post.creado }}</small>
+
+  <hr>
+  <h3>Comentarios</h3>
+
+  {% for comentario in comentarios %}
+    <div>
+      <p>{{ comentario.texto|linebreaks }}</p>
+      <small>— {{ comentario.autor.username }} el {{ comentario.creado }}</small>
+    </div>
+    <hr>
+  {% empty %}
+    <p>No hay comentarios aún.</p>
+  {% endfor %}
+
+  {% if user.is_authenticated %}
+    <h4>Agregar comentario:</h4>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Comentar</button>
+    </form>
+  {% else %}
+    <p><a href="{% url 'login' %}">Inicia sesión</a> para comentar.</p>
+  {% endif %}
+{% endblock %}
